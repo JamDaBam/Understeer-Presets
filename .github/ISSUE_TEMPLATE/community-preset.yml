@@ -1,0 +1,128 @@
+name: Community preset submission
+description: Share one Understeer preset with the community library. Only for preset submissions.
+title: "[Preset] "
+labels: ["preset-submission"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **This form is only for submitting one preset to the community library.**
+        For bugs or questions about Understeer, use [Understeer's issues](https://github.com/JamDaBam/Understeer/issues) instead.
+
+        Before you submit, please note:
+
+        - **Everything you enter here is public**, as soon as you submit it: issues in this repository can be read by anyone. You need a GitHub account to submit.
+        - **Don't enter anything personal**: no e-mail address, no real name unless you want it shown, no serial numbers, file paths, logs or diagnostics. They aren't needed.
+        - **A submission is not published automatically.** A maintainer reviews it and may ask for changes or decline it. Only an accepted preset is added to the catalog, by the maintainer.
+        - **The proposed catalog ID is a suggestion only** and may change: it is checked against the catalog again when the preset is added.
+        - **Nobody tests the values on a wheelbase.** Presets are settings other drivers chose; nothing guarantees they suit or are safe for every wheelbase.
+        - The checks of this form only make sure fields are filled in. The maintainer checks the preset itself with Understeer's catalog rules.
+
+        If you have Understeer, you can copy the preset with **Share → Copy as JSON** in the menu of a saved preset. Don't change its values by hand.
+
+  - type: input
+    id: preset-name
+    attributes:
+      label: Preset name
+      description: The name of the preset, one line, up to 80 characters.
+      placeholder: GT3 Endurance
+    validations:
+      required: true
+
+  - type: input
+    id: game
+    attributes:
+      label: Game
+      description: The game the preset is for, one line, up to 80 characters.
+      placeholder: Assetto Corsa Competizione
+    validations:
+      required: true
+
+  - type: input
+    id: wheelbase
+    attributes:
+      label: Wheelbase model
+      description: >-
+        The wheelbase you made the preset on, written exactly as one of:
+        ClubSport Wheel Base V2, ClubSport Wheel Base V2.5,
+        CSL Elite Wheel Base, CSL Elite Wheel Base (PS4), CSL DD,
+        CSR Elite Wheel Base, Podium Wheel Base DD1, Podium Wheel Base DD2.
+      placeholder: CSL DD
+    validations:
+      required: true
+
+  - type: input
+    id: author
+    attributes:
+      label: Author
+      description: >-
+        The name shown with the preset in the catalog, up to 40 characters.
+        It doesn't have to be your GitHub name, and your GitHub name is not
+        put in its place.
+      placeholder: Your chosen name
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What the preset is for, plain text, up to 20 lines and 1000 characters. No web addresses.
+      placeholder: Calm GT3 feel for long stints.
+      render: text
+    validations:
+      required: true
+
+  - type: input
+    id: tags
+    attributes:
+      label: Tags (optional)
+      description: Up to 10 short words of a-z, 0-9 and -, separated by commas.
+      placeholder: gt3, endurance
+
+  - type: input
+    id: catalog-id
+    attributes:
+      label: Proposed catalog ID (optional)
+      description: >-
+        A suggestion only, e.g. <game>-<preset name>: up to 64 characters of
+        a-z, 0-9 and -. The maintainer may choose another one.
+      placeholder: assetto-corsa-competizione-gt3-endurance
+
+  - type: textarea
+    id: preset-json
+    attributes:
+      label: Preset JSON
+      description: >-
+        Only the preset, as Understeer copies it with Share → Copy as JSON:
+        one object with understeer_preset, name and values. Paste it
+        unchanged; its settings and values are what will be shared. The
+        fields above hold everything else, so don't add them here.
+      placeholder: |
+        {
+          "understeer_preset": 1,
+          "name": "GT3 Endurance",
+          "values": {"SEN": 540, "FF": 75, "FOR": 100}
+        }
+      render: json
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: acknowledgement
+    attributes:
+      label: Before you submit
+      description: All of these are needed to submit.
+      options:
+        - label: I understand that everything in this issue is public as soon as I submit it.
+          required: true
+        - label: I have not included personal information, such as an e-mail address, serial numbers, file paths or logs.
+          required: true
+        - label: I understand that a maintainer reviews the submission, may ask for changes or decline it, and may change the proposed ID.
+          required: true
+        - label: I understand that the values are not tested on a wheelbase by anyone, and that using a preset is at my own risk.
+          required: true
+        - label: This preset is mine to share, and I agree to its publication under CC0 1.0 (public domain), as described in CONTRIBUTING.md.
+          required: true
+    validations:
+      required: true
