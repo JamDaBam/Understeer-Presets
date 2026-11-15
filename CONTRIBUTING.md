@@ -96,3 +96,112 @@ Fork this repository, commit your change to `catalog.json` on a new
 branch and open a pull request. Say in a sentence what the preset is for.
 Maintainers review every submission before it is published; they may ask
 for changes or decline presets that look unsafe or unhelpful.
+
+## Automatic checks
+
+A community submission is preset data only: **it may change
+`catalog.json` and nothing else.** A pull request that adds, changes,
+renames or deletes any other file (scripts, tests, workflows,
+documentation, anything) fails the check, whatever the change is. If
+something else in this repository should change, open an issue instead;
+maintainers make such changes themselves, in a separate, reviewed step.
+
+Every pull request to `main` is checked automatically by GitHub Actions
+(the check "Validate presets"); `main` is checked again after a merge.
+The check runs the same validation as step 5, so a failing check means
+the same `error:` lines you get locally: they name the preset (its
+position and id) and what to fix. Fix `catalog.json`, push to the same
+branch, and the check runs again.
+
+The check also lists the presets the pull request adds, changes or
+removes. A removed preset and a preset that seems to have moved to
+another id are marked for a maintainer's review; they aren't errors, but
+they are looked at closely.
+
+A passing check doesn't mean the preset is accepted: every submission is
+reviewed by a maintainer before it is merged. Your entry is published
+under CC0 1.0 as said above, only after it is merged. The catalog stays
+untrusted input for Understeer as well: it checks every preset again
+when it reads the catalog, and adding a preset never applies it to a
+wheelbase; only you do, in Understeer.
+
+How the check stays safe: a pull request is treated as untrusted data.
+From it, only `catalog.json` is read, without checking out anything of
+the pull request; the checking code (`scripts/`, `tests/`) and the CI
+requirements come from `main`, the catalog rules from a fixed Understeer
+commit (see below), and nothing of the pull request is run. The workflow
+can only read the repository and gets no secrets; it doesn't merge,
+publish or deploy anything.
+
+## For maintainers
+
+**What the check can't guarantee.** For pull requests, GitHub runs the
+workflow file as the pull request has it. A pull request that changes
+`.github/workflows/` can therefore change its own check, up to making it
+pass, under the same job name "validate"; a required status check can't
+tell. Everything the check enforces (only `catalog.json` changes, the
+catalog rules, trusted code and parser) only holds while the workflow
+that runs is the one on `main`. So before merging:
+
+1. Look at *Files changed*: a community pull request must list
+   `catalog.json` only. GitHub shows this list independently of any
+   workflow. Anything else: don't merge it as a submission.
+2. For a check the pull request can't influence, run the workflow by
+   hand: *Actions → Validate presets → Run workflow*, branch `main`,
+   with the pull request's number. It uses the workflow, scripts and
+   parser of `main` and reads only the pull request's merge, as data.
+   Its log names the pull request head it checked; merge only if that
+   is still the head of the pull request.
+3. Approve workflow runs of pull requests from forks only after looking
+   at their changes (see the settings below).
+
+**Maintenance changes** (scripts, tests, workflows, the parser pin, CI
+requirements, documentation) are not community submissions, and the
+check refuses them like any other change outside `catalog.json`. Make
+them on a branch of this repository, in a pull request of their own;
+the rest of the check (tests, catalog) still has to pass. Review the
+whole diff, run `python3 -m pytest tests` locally against the pinned
+Understeer commit, then merge by bypassing the failed rule ("Merge
+without waiting for requirements to be met"), which only the bypass list
+of the ruleset allows. After the merge, the check runs on `main` with
+the new code.
+
+**Trusted parser.** The catalog rules are Understeer's
+`understeer/library.py`, fetched at the commit in
+[`.github/understeer-parser.txt`](.github/understeer-parser.txt). To
+update it, after the change in Understeer is reviewed and public:
+
+1. Put the full 40-character commit id into the `commit=` line.
+2. Run the check and the tests locally against a checkout of exactly that
+   commit (`--understeer PATH`, or `UNDERSTEER_SRC=PATH python3 -m pytest
+   tests`).
+3. Change it as a maintenance change (above).
+
+Choose a commit that stays reachable on Understeer's `main` (or a tag):
+a commit only on a branch that is later rebased or deleted can't be
+fetched any more.
+
+**pytest for CI** is pinned with hashes in
+[`.github/requirements-ci.txt`](.github/requirements-ci.txt) and only used
+by the workflow.
+
+**Repository settings** (Settings on GitHub; they can't be set from this
+repository):
+
+- *Rules → Rulesets*, a branch ruleset for the default branch (`main`),
+  enforcement "Active": restrict deletions, block force pushes, require
+  a pull request before merging, and require the status check
+  "validate", with "GitHub Actions" as its source. The check can be
+  chosen once it has run on GitHub at least once. As the only
+  maintainer you can't approve your own pull requests, so require no
+  approvals. Bypass list: only "Repository admin", set to "For pull
+  requests only", for maintenance changes.
+- *Actions → General → Actions permissions*: allow only actions of this
+  repository's owner, or none from elsewhere; the workflow uses none.
+- *Actions → General → Approval for running fork pull request
+  workflows*: "Require approval for all external contributors", so a
+  workflow from a fork only runs after you have looked at its changes.
+- *Actions → General → Workflow permissions*: "Read repository contents
+  and packages permissions"; leave "Allow GitHub Actions to create and
+  approve pull requests" off.
+- *Pages* stays as it is: deploy from branch `main`, folder `/ (root)`.

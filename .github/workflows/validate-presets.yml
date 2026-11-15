@@ -1,0 +1,180 @@
+# Checks the catalog of every pull request to main, and main after a merge.
+#
+# A contribution is untrusted: from it, only catalog.json is read, as data,
+# and it may change nothing but catalog.json. The checking code (scripts/,
+# tests/) and the CI requirements come from the base commit on main, the
+# parser from the Understeer commit pinned in .github/understeer-parser.txt
+# on main. Nothing here writes to the repository, merges, publishes or
+# deploys; GitHub Pages keeps publishing main as it is.
+#
+# Limit: for pull_request, GitHub runs this file as the pull request has it,
+# so a pull request that changes it could change its own check. Such a pull
+# request is refused below, but only as long as this file is the one that
+# runs. Run the workflow by hand on main with the pull request's number
+# ("Run workflow") for a check this pull request can't change. See
+# "Automatic checks" in CONTRIBUTING.md.
+name: Validate presets
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      pull_request:
+        description: >-
+          Number of a pull request to check with this workflow as it is on
+          main (leave empty to check main itself)
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      REPO_URL: https://github.com/${{ github.repository }}.git
+    steps:
+      - name: Decide what to check
+        env:
+          EVENT: ${{ github.event_name }}
+          EVENT_PR: ${{ github.event.pull_request.number }}
+          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
+          INPUT_PR: ${{ inputs.pull_request }}
+          REF: ${{ github.ref }}
+          SHA: ${{ github.sha }}
+        run: |
+          case "$EVENT" in
+            pull_request)
+              pr=$EVENT_PR trusted=$EVENT_BASE ;;
+            workflow_dispatch)
+              trusted=$SHA pr=$INPUT_PR
+              if [ -n "$pr" ] && [ "$REF" != refs/heads/main ]; then
+                echo "::error::Check a pull request from main only: there this workflow is the reviewed one."
+                exit 1
+              fi ;;
+            *)
+              pr="" trusted=$SHA ;;
+          esac
+          if ! [[ "$trusted" =~ ^[0-9a-f]{40}$ ]] \
+              || ! [[ -z "$pr" || "$pr" =~ ^[1-9][0-9]{0,8}$ ]]; then
+            echo "::error::No pull request number or commit to check."
+            exit 1
+          fi
+          echo "PR=$pr" >> "$GITHUB_ENV"
+          echo "TRUSTED_SHA=$trusted" >> "$GITHUB_ENV"
+          echo "Checking ${pr:+pull request #$pr against }main at $trusted"
+
+      - name: Fetch the trusted checking code (main)
+        run: |
+          git init -q trusted
+          git -C trusted fetch -q --depth 1 "$REPO_URL" "$TRUSTED_SHA"
+          git -C trusted checkout -q FETCH_HEAD
+          git -C trusted log -1 --format='Checking code from %H'
+
+      - name: Fetch the contribution (data only)
+        run: |
+          if [ -z "$PR" ]; then
+            cp trusted/catalog.json catalog-to-check.json
+            exit 0
+          fi
+          # The merge of the pull request into main, as it would be
+          # published. Nothing of it is checked out; git only reads its
+          # objects, and git's settings here are ours, not the contribution's.
+          git init -q --bare contribution.git
+          if ! git -C contribution.git fetch -q --depth 2 "$REPO_URL" \
+              "refs/pull/$PR/merge"; then
+            echo "::error::The pull request can't be merged into main as it is (conflict?)."
+            exit 1
+          fi
+          git -C contribution.git rev-parse FETCH_HEAD^1 > merge-base.txt
+          if [ "$(cat merge-base.txt)" != "$TRUSTED_SHA" ]; then
+            echo "::error::The pull request's merge isn't based on main at $TRUSTED_SHA; open the pull request on GitHub, so its merge is updated, and run the check again."
+            exit 1
+          fi
+          git -C contribution.git log -1 --format='Pull request head: %H' FETCH_HEAD^2
+          git -C contribution.git diff --raw -z --no-abbrev -r \
+            --find-renames --find-copies-harder FETCH_HEAD^1 FETCH_HEAD \
+            > changes.bin
+          if ! git -C contribution.git cat-file blob FETCH_HEAD:catalog.json \
+              > catalog-to-check.json; then
+            echo "::error::The contribution has no catalog.json to check."
+            : > catalog-to-check.json
+          fi
+
+      - name: Only catalog.json may change
+        id: files
+        if: env.PR != ''
+        # The other checks still run, so their notes show as well; the job
+        # fails at the end
+        continue-on-error: true
+        run: |
+          python3 -I trusted/scripts/check_changed_files.py --github changes.bin
+
+      - name: Fetch the pinned Understeer parser
+        run: |
+          pin=trusted/.github/understeer-parser.txt
+          url=$(sed -n 's|^repository=\(https://github\.com/[A-Za-z0-9._-]*/[A-Za-z0-9._-]*\.git\)$|\1|p' "$pin")
+          sha=$(sed -n 's/^commit=\([0-9a-f]\{40\}\)$/\1/p' "$pin")
+          if [ -z "$url" ] || [ -z "$sha" ]; then
+            echo "::error::$pin needs a repository= and a commit= line."
+            exit 1
+          fi
+          git init -q understeer
+          if ! git -C understeer fetch -q --depth 1 "$url" "$sha"; then
+            echo "::error::Understeer commit $sha isn't public (yet)."
+            exit 1
+          fi
+          git -C understeer checkout -q FETCH_HEAD
+          test -f understeer/understeer/library.py
+          echo "Parser from Understeer $sha"
+
+      - name: Compare with main
+        if: env.PR != ''
+        run: |
+          python3 -I trusted/scripts/compare_catalogs.py --github \
+            --understeer understeer trusted/catalog.json catalog-to-check.json
+
+      - name: Install pytest (pinned, hashes checked)
+        run: |
+          python3 --version
+          python3 -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install --quiet --disable-pip-version-check \
+            --no-deps --only-binary :all: --require-hashes \
+            -r trusted/.github/requirements-ci.txt
+
+      - name: Test the checking code
+        working-directory: trusted
+        env:
+          UNDERSTEER_SRC: ${{ github.workspace }}/understeer
+        run: |
+          "$RUNNER_TEMP/venv/bin/python" -I -m pytest -q -p no:cacheprovider tests
+
+      - name: Check the catalog
+        run: |
+          # The output holds text from the contribution: no line of it may
+          # be taken as a workflow command
+          token=$(python3 -c 'import secrets; print(secrets.token_hex(16))')
+          echo "::stop-commands::$token"
+          status=0
+          python3 -I trusted/scripts/validate_catalog.py \
+            --understeer understeer catalog-to-check.json || status=$?
+          echo "::$token::"
+          if [ "$status" -ne 0 ]; then
+            echo "::error::The catalog breaks a rule; the lines above say which preset and why."
+          fi
+          exit "$status"
+
+      - name: Refuse changes besides catalog.json
+        if: ${{ !cancelled() && steps.files.outcome != 'success' && env.PR != '' }}
+        run: |
+          echo "::error::A community contribution may change catalog.json only; see the step \"Only catalog.json may change\"."
+          exit 1

@@ -190,6 +190,17 @@ def test_unexpected_fields_are_warned_about_not_rejected():
         'Preset 1 (test-preset), preset: unknown key "folder" is ignored by Understeer; is it a typo?']
 
 
+def test_unknown_keys_are_shown_escaped():
+    """A key can hold any text: a line break in it must not start a line of
+    its own in the output (in CI, such a line could be a workflow command)."""
+    item = entry()
+    item["meta"]["x\n::error::fake"] = 1
+    _errs, warnings = check(catalog(item))
+    assert warnings == ['Preset 1 (test-preset), meta: unknown key '
+                        '"x\\n::error::fake" is ignored by Understeer; is '
+                        'it a typo?']
+
+
 @pytest.mark.parametrize("key, value", [
     ("description", "See https://example.org"),
     ("description", "www.example.org"),
