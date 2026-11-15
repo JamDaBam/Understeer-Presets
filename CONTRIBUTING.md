@@ -4,6 +4,11 @@ Thanks for sharing your setup! A submission is a pull request that adds
 one entry to [`catalog.json`](catalog.json). It is reviewed before it is
 published.
 
+By submitting, you agree that your entry, including its description, is
+published under [CC0 1.0 Universal](LICENSE), and you confirm that it is
+yours to give: anyone may then use, change and share it without asking.
+Your author name stays in the catalog all the same.
+
 ## 1. Export the preset from Understeer
 
 In Understeer, open the ⋮ menu of the preset under **Saved Presets** and

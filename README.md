@@ -50,3 +50,9 @@ python3 -m pytest tests
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Every submission is reviewed
 before it is published.
+
+## License
+
+The catalog and everything in it are dedicated to the public domain under
+[CC0 1.0 Universal](LICENSE): anyone may use, change and share the presets
+for any purpose, without asking and without having to name anyone.
