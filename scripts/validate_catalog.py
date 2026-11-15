@@ -70,7 +70,10 @@ def _unknown_keys(data):
     def check(obj, known, where):
         if isinstance(obj, dict):
             for key in sorted(set(obj) - known):
-                warnings.append(f"{where}: unknown key \"{key}\" is ignored "
+                # As a JSON string: a line break or control character in
+                # the key is shown escaped, never as a line of its own
+                shown = json.dumps(key, ensure_ascii=False)
+                warnings.append(f"{where}: unknown key {shown} is ignored "
                                 "by Understeer; is it a typo?")
 
     check(data, CATALOG_KEYS, "Catalog")

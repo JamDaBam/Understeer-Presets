@@ -1,0 +1,5 @@
+# The Understeer commit whose parser (understeer/library.py) checks the
+# catalog in CI. Only the two lines below are read. To update, see
+# "Trusted parser" in CONTRIBUTING.md.
+repository=https://github.com/JamDaBam/Understeer.git
+commit=7c0a648b45b9a2505246e466f4a840e18643c893

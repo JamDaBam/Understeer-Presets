@@ -56,10 +56,15 @@ The tests of the check need pytest:
 python3 -m pytest tests
 ```
 
+Pull requests are checked the same way automatically, by GitHub Actions.
+A community pull request may change `catalog.json` only; see "Automatic
+checks" in [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Every submission is reviewed
-before it is published.
+See [CONTRIBUTING.md](CONTRIBUTING.md). A submission changes
+`catalog.json` only, and every submission is reviewed by a maintainer
+before it is published, also when its automatic check passes.
 
 ## License
 
