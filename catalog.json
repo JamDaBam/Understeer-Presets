@@ -34,6 +34,22 @@
         "values": {"SEN": 540, "FF": 60, "FOR": 100, "SPR": 0, "DPR": 0,
                    "FFS": 1, "FEI": 50, "INT": 0, "SHO": 60, "DRI": 0}
       }
+    },
+    {
+      "id": "temporary-integration-test-b",
+      "meta": {
+        "author": "Integration Test",
+        "game": "Integration Test (no game)",
+        "wheelbase": "CSL DD",
+        "drive": "direct_drive",
+        "description": "Temporary entry for a CI integration test only. Never merged, not a setting to use.",
+        "tags": ["test"]
+      },
+      "preset": {
+        "understeer_preset": 1,
+        "name": "Temporary Integration Test",
+        "values": {"SEN": 900, "FF": 70}
+      }
     }
   ]
 }
