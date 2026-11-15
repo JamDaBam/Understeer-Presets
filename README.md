@@ -71,3 +71,5 @@ before it is published, also when its automatic check passes.
 The catalog and everything in it are dedicated to the public domain under
 [CC0 1.0 Universal](LICENSE): anyone may use, change and share the presets
 for any purpose, without asking and without having to name anyone.
+
+Temporary integration test (Test A): this line must be refused by the check and is never merged.
