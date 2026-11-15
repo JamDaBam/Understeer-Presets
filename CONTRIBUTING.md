@@ -1,8 +1,19 @@
 # Contributing a preset
 
-Thanks for sharing your setup! A submission is a pull request that adds
-one entry to [`catalog.json`](catalog.json). It is reviewed before it is
-published.
+Thanks for sharing your setup! Every submission is reviewed by a
+maintainer before it is published. There are three ways to submit:
+
+- **From Understeer** (*Share → Share with Community…*): not available
+  yet. A later version of Understeer will fill in the submission form
+  below for you.
+- **With the submission form**, no Git needed: open
+  [a preset submission](https://github.com/JamDaBam/Understeer-Presets/issues/new?template=community-preset.yml)
+  (you need a GitHub account), fill in the fields, paste the preset you
+  copied in Understeer with *Share → Copy as JSON*, tick the boxes and
+  submit. The form is a public issue; a maintainer checks it and, if it
+  is accepted, adds the preset to the catalog.
+- **With a pull request**, if you know Git: add one entry to
+  [`catalog.json`](catalog.json), as described in the steps below.
 
 By submitting, you agree that your entry, including its description, is
 published under [CC0 1.0 Universal](LICENSE), and you confirm that it is
@@ -134,6 +145,24 @@ can only read the repository and gets no secrets; it doesn't merge,
 publish or deploy anything.
 
 ## For maintainers
+
+**Submissions through the issue form** are requests, never data that is
+used directly: nothing reacts to them automatically, and nothing of them
+is run. The field *Preset JSON* holds only the preset as Understeer
+copies it (`{"understeer_preset": 1, "name": …, "values": {…}}`); the
+other fields hold the metadata and a proposed id. To accept one, take
+the preset JSON from the issue as text and build the catalog entry
+(`{"id": …, "meta": …, "preset": …}`, see step 2) from it and the
+fields, choose the final id against the current catalog, check it with
+`python3 scripts/validate_catalog.py`, and add it in a pull request that
+changes `catalog.json` only. Then close the issue
+with a link to it. The form's own checks only make sure fields are
+filled in. The label `preset-submission` is only added if it exists in
+the repository.
+
+The form's field ids (`preset-name`, `game`, `wheelbase`, `author`,
+`description`, `tags`, `catalog-id`, `preset-json`) are also the names
+of the URL parameters that fill them in; keep them as they are.
 
 **What the check can't guarantee.** For pull requests, GitHub runs the
 workflow file as the pull request has it. A pull request that changes

@@ -62,9 +62,13 @@ checks" in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). A submission changes
-`catalog.json` only, and every submission is reviewed by a maintainer
-before it is published, also when its automatic check passes.
+Submit a preset with the
+[preset submission form](https://github.com/JamDaBam/Understeer-Presets/issues/new?template=community-preset.yml)
+(`.github/ISSUE_TEMPLATE/community-preset.yml`, no Git needed), or as a
+pull request that changes `catalog.json` only; see
+[CONTRIBUTING.md](CONTRIBUTING.md). Submitting straight from Understeer is
+not available yet. Every submission is reviewed by a maintainer before it
+is published, also when its automatic check passes.
 
 ## License
 
