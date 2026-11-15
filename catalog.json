@@ -1,0 +1,39 @@
+{
+  "understeer_library": 1,
+  "presets": [
+    {
+      "id": "example-gt3-demo",
+      "meta": {
+        "author": "Understeer Examples",
+        "game": "Assetto Corsa Competizione",
+        "wheelbase": "CSL DD",
+        "drive": "direct_drive",
+        "description": "Demonstration entry only. It shows the catalog format and uses Understeer's built-in default values. Not tested on a wheelbase and not a recommended force feedback setup.",
+        "tags": ["example", "demo"]
+      },
+      "preset": {
+        "understeer_preset": 1,
+        "name": "Example GT3 (Demo)",
+        "values": {"SEN": 900, "FF": 70, "FOR": 100, "SPR": 0, "DPR": 0,
+                   "FFS": 1, "FEI": 30, "INT": 0, "SHO": 80}
+      }
+    },
+    {
+      "id": "example-rally-demo",
+      "meta": {
+        "author": "Understeer Examples",
+        "game": "BeamNG.drive",
+        "wheelbase": "ClubSport Wheel Base V2.5",
+        "drive": "belt",
+        "description": "Demonstration entry only. It shows the catalog format with placeholder values. Not tested on a wheelbase and not a recommended force feedback setup.",
+        "tags": ["example", "demo"]
+      },
+      "preset": {
+        "understeer_preset": 1,
+        "name": "Example Rally (Demo)",
+        "values": {"SEN": 540, "FF": 60, "FOR": 100, "SPR": 0, "DPR": 0,
+                   "FFS": 1, "FEI": 50, "INT": 0, "SHO": 60, "DRI": 0}
+      }
+    }
+  ]
+}
