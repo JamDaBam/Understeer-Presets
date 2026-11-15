@@ -6,12 +6,17 @@ the app for tuning Fanatec wheelbases on Linux.
 ## How it works
 
 The whole library is one static file, [`catalog.json`](catalog.json), with
-every preset embedded in it. Understeer downloads only this file, shows
-the presets in it and lets you add the ones you choose to your own
-presets. There is no server, no database, no API and no account: the
-catalog is published as a plain file through GitHub Pages, at
-`https://jamdabam.github.io/Understeer-Presets/catalog.json` once Pages is
-switched on (not yet).
+every preset embedded in it. There is no server, no database, no API and
+no account: the catalog is published as a plain file through GitHub Pages
+at
+
+https://jamdabam.github.io/Understeer-Presets/catalog.json
+
+Every change merged into `main` appears there within about ten minutes.
+
+Understeer will download only this file, show the presets in it and let
+you add the ones you choose to your own presets. That part of Understeer
+is still being developed and not released yet.
 
 Each entry holds a preset exactly as Understeer exports it, plus
 community information such as the game and the wheelbase it was made on.
