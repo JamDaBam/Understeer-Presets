@@ -14,16 +14,17 @@ https://jamdabam.github.io/Understeer-Presets/catalog.json
 
 Every change merged into `main` appears there within about ten minutes.
 
-Understeer will download only this file, show the presets in it and let
-you add the ones you choose to your own presets. That part of Understeer
-is still being developed and not released yet.
+Starting with Understeer 2.4.0-beta.1 (a test version), **Community
+Library…** on the Presets page downloads only this file, shows the
+presets in it and lets you add the ones you choose to your own presets.
+Browsing and importing presets needs no account. Because the catalog is
+only this file, a preset added here reaches Understeer without a new
+release of Understeer.
 
 Each entry holds a preset exactly as Understeer exports it, plus
 community information such as the game and the wheelbase it was made on.
 The format and its rules are described in Understeer's
 [`docs/preset-library.md`](https://github.com/JamDaBam/Understeer/blob/main/docs/preset-library.md).
-The preset library is still being developed in Understeer and not merged
-yet, so this link works only once it is.
 
 **Adding a preset never changes your wheelbase.** It is saved as one of
 your presets; its settings only reach the wheelbase when you apply it
@@ -36,9 +37,7 @@ format and are neither tested on a wheelbase nor recommended settings.
 
 The check uses the catalog rules of Understeer itself, so it needs an
 Understeer source checkout with `understeer/library.py` and Python 3. It
-runs offline and doesn't touch any device. Until the preset library is
-merged into Understeer, only a development checkout has that file; the
-`git clone` below works once it is merged.
+runs offline and doesn't touch any device.
 
 ```sh
 git clone https://github.com/JamDaBam/Understeer.git ../Understeer
@@ -66,9 +65,18 @@ Submit a preset with the
 [preset submission form](https://github.com/JamDaBam/Understeer-Presets/issues/new?template=community-preset.yml)
 (`.github/ISSUE_TEMPLATE/community-preset.yml`, no Git needed), or as a
 pull request that changes `catalog.json` only; see
-[CONTRIBUTING.md](CONTRIBUTING.md). Submitting straight from Understeer is
-not available yet. Every submission is reviewed by a maintainer before it
-is published, also when its automatic check passes.
+[CONTRIBUTING.md](CONTRIBUTING.md).
+
+Starting with Understeer 2.4.0-beta.1, **Share → Share with Community…**
+in the menu of a saved preset fills in the submission form for you; you
+check it on GitHub and submit it yourself. Understeer 2.4.0-beta.1 puts
+the preset JSON into the form; the coming 2.4.0-beta.2 will put the
+complete catalog entry there. Both formats are accepted. Submitting
+needs a GitHub account; browsing and importing presets in Understeer
+doesn't.
+
+Every submission is reviewed by a maintainer before it is published, also
+when its automatic check passes; nothing is published right away.
 
 ## License
 

@@ -379,6 +379,29 @@ def test_documentation():
     assert "issues/new?template=community-preset.yml" in contributing
     assert "community-preset.yml" in readme
     for text in (contributing, readme):
-        assert "not available yet" in " ".join(text.split())
+        text = " ".join(text.split())
+        # Sharing from Understeer is there since 2.4.0-beta.1; the coming
+        # beta.2 is not described as released
+        assert "not available yet" not in text
+        assert "*Share → Share with Community…*" in text \
+            or "**Share → Share with Community…**" in text
+        assert "starting with Understeer 2.4.0-beta.1" in text.replace(
+            "Starting", "starting")
+        assert "Understeer 2.4.0-beta.1 puts the preset JSON into" in text
+        assert ("the coming 2.4.0-beta.2 will put the complete catalog "
+                "entry there") in text
+        assert "Both formats are accepted." in text
+        assert "submit it yourself" in text
+        # Who needs an account, and that nothing is published right away
+        assert ("Submitting needs a GitHub account; browsing and importing "
+                "presets in Understeer doesn't") in text
+        assert "reviewed by a maintainer before it" in text
+        assert "not published right away" in text \
+            or "nothing is published right away" in text
+        assert "without a new release of Understeer" in text
+    readme_text = " ".join(readme.split())
+    for stale in ("not released yet", "not merged yet", "Until the preset "
+                  "library is merged"):
+        assert stale not in readme_text, stale
     # The rule for pull requests stays
     assert "**it may change\n`catalog.json` and nothing else.**" in contributing

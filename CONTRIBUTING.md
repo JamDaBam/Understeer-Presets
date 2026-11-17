@@ -3,9 +3,12 @@
 Thanks for sharing your setup! Every submission is reviewed by a
 maintainer before it is published. There are three ways to submit:
 
-- **From Understeer** (*Share → Share with Community…*): not available
-  yet. A later version of Understeer will fill in the submission form
-  below for you.
+- **From Understeer** (*Share → Share with Community…* in the menu of a
+  saved preset), starting with Understeer 2.4.0-beta.1: it fills in the
+  submission form below for you, and you check it on GitHub and submit
+  it yourself. Understeer 2.4.0-beta.1 puts the preset JSON into the
+  field *Catalog Entry (JSON)*; the coming 2.4.0-beta.2 will put the
+  complete catalog entry there. Both formats are accepted.
 - **With the submission form**, no Git needed: open
   [a preset submission](https://github.com/JamDaBam/Understeer-Presets/issues/new?template=community-preset.yml)
   (you need a GitHub account), fill in the fields, paste the preset you
@@ -14,6 +17,11 @@ maintainer before it is published. There are three ways to submit:
   is accepted, adds the preset to the catalog.
 - **With a pull request**, if you know Git: add one entry to
   [`catalog.json`](catalog.json), as described in the steps below.
+
+Submitting needs a GitHub account; browsing and importing presets in
+Understeer doesn't. A submission is not published right away: a
+maintainer reviews it first. Once an entry is added to `catalog.json`,
+Understeer shows it without a new release of Understeer.
 
 By submitting, you agree that your entry, including its description, is
 published under [CC0 1.0 Universal](LICENSE), and you confirm that it is
