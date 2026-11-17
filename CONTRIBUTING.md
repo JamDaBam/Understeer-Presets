@@ -148,21 +148,46 @@ publish or deploy anything.
 
 **Submissions through the issue form** are requests, never data that is
 used directly: nothing reacts to them automatically, and nothing of them
-is run. The field *Preset JSON* holds only the preset as Understeer
-copies it (`{"understeer_preset": 1, "name": …, "values": {…}}`); the
-other fields hold the metadata and a proposed id. To accept one, take
-the preset JSON from the issue as text and build the catalog entry
-(`{"id": …, "meta": …, "preset": …}`, see step 2) from it and the
-fields, choose the final id against the current catalog, check it with
-`python3 scripts/validate_catalog.py`, and add it in a pull request that
-changes `catalog.json` only. Then close the issue
-with a link to it. The form's own checks only make sure fields are
-filled in. The label `preset-submission` is only added if it exists in
-the repository.
+is run. The field *Catalog Entry (JSON)* (id `preset-json`) holds one of
+two forms; take it from the issue as text:
+
+- **A complete catalog entry** (`{"id": …, "meta": …, "preset": …}`, see
+  step 2), as newer versions of Understeer fill it in. After reviewing
+  it, you can copy the whole object into the `"presets"` list of
+  `catalog.json` as it is.
+- **Only the preset**, from older versions of Understeer or pasted by
+  hand: the preset as Understeer copies it
+  (`{"understeer_preset": 1, "name": …, "values": {…}}`). The other
+  fields hold the metadata and a proposed id; build the catalog entry
+  from them and the preset, as before.
+
+Either way, accepting a submission is a maintainer's decision, made by
+hand:
+
+- Everything in a submission is untrusted data, also a complete entry.
+- The readable fields of the issue must agree with the catalog entry
+  (name, game, wheelbase, author, description and tags). If they don't,
+  for example because one of them was changed by hand, ask the
+  submitter in the issue which is meant; don't decide it yourself.
+- Never change submitted settings or values silently. If one has to
+  change, ask the submitter.
+- Choose the final, unique id against the current catalog; the proposed
+  id is a suggestion only.
+- `python3 scripts/validate_catalog.py` must pass before the entry is
+  published.
+
+Then add the entry in a pull request that changes `catalog.json` only,
+and close the issue with a link to it. Nothing is published
+automatically, and nothing of a submission is ever applied to a
+wheelbase. The form's own checks only make sure fields are filled in.
+The label `preset-submission` is only added if it exists in the
+repository.
 
 The form's field ids (`preset-name`, `game`, `wheelbase`, `author`,
 `description`, `tags`, `catalog-id`, `preset-json`) are also the names
-of the URL parameters that fill them in; keep them as they are.
+of the URL parameters that fill them in; keep them as they are, also
+where a label changes (*Catalog Entry (JSON)* keeps the id
+`preset-json`).
 
 **What the check can't guarantee.** For pull requests, GitHub runs the
 workflow file as the pull request has it. A pull request that changes
