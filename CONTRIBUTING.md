@@ -107,7 +107,11 @@ A submission must pass without errors. In particular:
 - the `id` is not used yet,
 - every setting is one Understeer knows, with a value it accepts,
 - no value is changed by Understeer, e.g. `905` for the steering angle,
-  which Understeer would keep as `900`.
+  which Understeer would keep as `900`,
+- the id prefix `example-` and the tag `demo` are reserved for
+  demonstration entries; a real preset carries neither, nor the notice
+  "Demonstration entry only" in its description. ("Demo" in a preset's
+  name is fine, e.g. "Demolition Derby".)
 
 ## 6. Open a pull request
 
@@ -227,6 +231,15 @@ Understeer commit, then merge by bypassing the failed rule ("Merge
 without waiting for requirements to be met"), which only the bypass list
 of the ruleset allows. After the merge, the check runs on `main` with
 the new code.
+
+**Rules about the catalog's content belong in
+`scripts/validate_catalog.py`,** not in tests. For a pull request, the
+tests run on the catalog of `main`; only the validator also checks the
+catalog of the pull request. A rule kept in the validator is the same
+locally (step 5), for pull requests and on `main`. A demonstration entry
+(id `example-…`) needs "Demo" in its name, the tag `demo` and the notice
+"Demonstration entry only" in its description; the catalog doesn't need
+to have one.
 
 **Trusted parser.** The catalog rules are Understeer's
 `understeer/library.py`, fetched at the commit in

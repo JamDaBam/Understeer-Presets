@@ -30,6 +30,11 @@ META_KEYS = {"author", "game", "wheelbase", "drive", "torque_nm",
              "description", "tags"}
 PRESET_KEYS = {"understeer_preset", "name", "values"}
 URL_RE = re.compile(r"[a-z][a-z0-9+.-]*://|www\.", re.IGNORECASE)
+# Demonstration entries: an id with this prefix makes one; the tag and the
+# note are theirs alone, so a real preset is never taken for one
+EXAMPLE_PREFIX = "example-"
+DEMO_TAG = "demo"
+DEMO_NOTE = "Demonstration entry only"
 
 
 class SetupError(Exception):
@@ -87,6 +92,42 @@ def _unknown_keys(data):
     return warnings
 
 
+def _demo_problems(entry):
+    """Reasons why entry, as Understeer accepted it, is marked wrongly as
+    a demonstration entry or not.
+
+    Checked is what Understeer shows: the name, tags and description after
+    its cleaning. Tags are then lower-case a-z, 0-9 and -, so "DEMO" is
+    the tag "demo"; texts have lost characters that aren't printable
+    (e.g. a zero-width space or soft hyphen), and here any run of spaces
+    or line breaks counts as one space. Look-alike letters of other
+    scripts are not caught in texts. An example (id
+    "example-…") says it is one in all three places: "Demo" in its name,
+    the tag "demo" and the note in its description. A real preset has
+    neither the tag nor the note, in any case or spacing; "Demo" in its
+    name is fine ("Demolition Derby")."""
+    tagged = DEMO_TAG in (entry.meta.tags or ())
+    description = " ".join((entry.meta.description or "").split())
+    if entry.id.startswith(EXAMPLE_PREFIX):
+        problems = []
+        if "Demo" not in entry.name:
+            problems.append('an example needs "Demo" in preset.name')
+        if not tagged:
+            problems.append(f'an example needs the tag "{DEMO_TAG}"')
+        if DEMO_NOTE not in description:
+            problems.append(f'an example needs "{DEMO_NOTE}" in '
+                            "meta.description")
+        return problems
+    problems = []
+    if tagged:
+        problems.append(f'the tag "{DEMO_TAG}" is for examples only (id '
+                        f'"{EXAMPLE_PREFIX}…")')
+    if DEMO_NOTE.casefold() in description.casefold():
+        problems.append(f'"{DEMO_NOTE}" in meta.description is for '
+                        f'examples only (id "{EXAMPLE_PREFIX}…")')
+    return problems
+
+
 def validate(raw, library):
     """(errors, warnings) of the catalog bytes raw, as readable lines."""
     try:
@@ -116,6 +157,7 @@ def validate(raw, library):
         for attr, shared, kept in entry.adjusted:
             errors.append(f"{where}: {attr} is {shared}, but Understeer "
                           f"would keep {kept}; use {kept}.")
+        errors += [f"{where}: {problem}." for problem in _demo_problems(entry)]
     if not catalog.entries and not errors:
         errors.append("Catalog: there is no preset in it.")
     return errors, _unknown_keys(data)
