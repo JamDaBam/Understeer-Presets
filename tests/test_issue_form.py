@@ -380,16 +380,17 @@ def test_documentation():
     assert "community-preset.yml" in readme
     for text in (contributing, readme):
         text = " ".join(text.split())
-        # Sharing from Understeer is there since 2.4.0-beta.1; the coming
-        # beta.2 is not described as released
+        # Sharing from Understeer is there since 2.4.0-beta.1; beta.1
+        # submits the preset, beta.2 and newer the complete catalog entry
         assert "not available yet" not in text
+        assert "the coming 2.4.0-beta.2" not in text
         assert "*Share → Share with Community…*" in text \
             or "**Share → Share with Community…**" in text
         assert "starting with Understeer 2.4.0-beta.1" in text.replace(
             "Starting", "starting")
         assert "Understeer 2.4.0-beta.1 puts the preset JSON into" in text
-        assert ("the coming 2.4.0-beta.2 will put the complete catalog "
-                "entry there") in text
+        assert ("2.4.0-beta.2 and newer put the complete catalog entry "
+                "there") in text
         assert "Both formats are accepted." in text
         assert "submit it yourself" in text
         # Who needs an account, and that nothing is published right away
@@ -401,7 +402,12 @@ def test_documentation():
         assert "without a new release of Understeer" in text
     readme_text = " ".join(readme.split())
     for stale in ("not released yet", "not merged yet", "Until the preset "
-                  "library is merged"):
+                  "library is merged", "examples only"):
         assert stale not in readme_text, stale
+    # Demonstration entries and community presets, without counting them
+    assert "**Demonstration entries** are marked as such" in readme_text
+    assert "`example-`" in readme_text and "the tag `demo`" in readme_text
+    assert ("**Community presets** come from their authors and are reviewed "
+            "by a maintainer before they are published.") in readme_text
     # The rule for pull requests stays
     assert "**it may change\n`catalog.json` and nothing else.**" in contributing

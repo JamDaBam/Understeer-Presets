@@ -7,8 +7,8 @@ maintainer before it is published. There are three ways to submit:
   saved preset), starting with Understeer 2.4.0-beta.1: it fills in the
   submission form below for you, and you check it on GitHub and submit
   it yourself. Understeer 2.4.0-beta.1 puts the preset JSON into the
-  field *Catalog Entry (JSON)*; the coming 2.4.0-beta.2 will put the
-  complete catalog entry there. Both formats are accepted.
+  field *Catalog Entry (JSON)*; 2.4.0-beta.2 and newer put the complete
+  catalog entry there. Both formats are accepted.
 - **With the submission form**, no Git needed: open
   [a preset submission](https://github.com/JamDaBam/Understeer-Presets/issues/new?template=community-preset.yml)
   (you need a GitHub account), fill in the fields, paste the preset you

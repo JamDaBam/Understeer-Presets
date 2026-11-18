@@ -30,8 +30,13 @@ The format and its rules are described in Understeer's
 your presets; its settings only reach the wheelbase when you apply it
 yourself in Understeer, as with any other preset.
 
-The two presets in the catalog now are **examples only**. They show the
-format and are neither tested on a wheelbase nor recommended settings.
+The catalog can hold demonstration entries and community presets.
+**Demonstration entries** are marked as such: their id starts with
+`example-`, their name says "Demo", they have the tag `demo` and their
+description says so. They show the format and are neither tested on a
+wheelbase nor recommended settings. **Community presets** come from
+their authors and are reviewed by a maintainer before they are
+published.
 
 ## Validating the catalog
 
@@ -70,8 +75,8 @@ pull request that changes `catalog.json` only; see
 Starting with Understeer 2.4.0-beta.1, **Share → Share with Community…**
 in the menu of a saved preset fills in the submission form for you; you
 check it on GitHub and submit it yourself. Understeer 2.4.0-beta.1 puts
-the preset JSON into the form; the coming 2.4.0-beta.2 will put the
-complete catalog entry there. Both formats are accepted. Submitting
+the preset JSON into the form; 2.4.0-beta.2 and newer put the complete
+catalog entry there. Both formats are accepted. Submitting
 needs a GitHub account; browsing and importing presets in Understeer
 doesn't.
 
