@@ -10,8 +10,7 @@
         "drive": "direct_drive",
         "description": "Demonstration entry only. It shows the catalog format and uses Understeer's built-in default values. Not tested on a wheelbase and not a recommended force feedback setup.",
         "tags": [
-          "example",
-          "demo"
+          "example"
         ]
       },
       "preset": {
