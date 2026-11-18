@@ -49,13 +49,89 @@ def test_published_catalog_is_clean():
     assert (errs, warnings) == ([], [])
 
 
+EXAMPLE_PREFIX = "example-"
+DEMO_NOTE = "Demonstration entry only"
+
+
+def demo_problems(item):
+    """How item is marked wrongly as a demo, as a list of problems.
+
+    An example (its id starts with "example-") says so wherever it is
+    shown: "Demo" in its name, the tag "demo" and the note in its
+    description. A real community preset carries neither the tag nor the
+    note, so it isn't taken for an example (its name may well contain
+    "Demo", as in "Demolition Derby")."""
+    meta = item["meta"]
+    tagged = "demo" in (meta.get("tags") or [])
+    noted = DEMO_NOTE in meta.get("description", "")
+    if item["id"].startswith(EXAMPLE_PREFIX):
+        marks = {"name": "Demo" in item["preset"]["name"], "tag": tagged,
+                 "description": noted}
+        return [f"{item['id']}: example without the demo {mark}"
+                for mark, present in marks.items() if not present]
+    marks = {"tag": tagged, "description": noted}
+    return [f"{item['id']}: real preset with the demo {mark}"
+            for mark, present in marks.items() if present]
+
+
+def demo_example(entry_id="example-test-demo", **meta):
+    item = entry(entry_id, tags=["example", "demo"],
+                 description=DEMO_NOTE + ". Not a recommended setup.", **meta)
+    item["preset"]["name"] = "Example Test (Demo)"
+    return item
+
+
 def test_published_examples_are_marked_as_demos():
     data = json.loads((REPO / "catalog.json").read_text(encoding="utf-8"))
-    for item in data["presets"]:
-        assert item["id"].startswith("example-")
-        assert "Demo" in item["preset"]["name"]
-        assert "demo" in item["meta"]["tags"]
-        assert "Demonstration entry only" in item["meta"]["description"]
+    examples = [item for item in data["presets"]
+                if item["id"].startswith(EXAMPLE_PREFIX)]
+    assert examples, "the catalog has no example to check"
+    assert [problem for item in data["presets"]
+            for problem in demo_problems(item)] == []
+
+
+def test_examples_next_to_real_presets():
+    real = entry("beamng-allrounder", description="Allrounder for BeamNG",
+                 tags=None)
+    real["preset"]["name"] = "BeamNG - Allrounder"
+    derby = entry("wreckfest-derby", tags=["derby"])
+    derby["preset"]["name"] = "Demolition Derby"
+    mixed = catalog(demo_example("example-a-demo"), real, derby,
+                    demo_example("example-b-demo"))
+    assert errors(mixed) == []
+    assert [demo_problems(item) for item in mixed["presets"]] == [[]] * 4
+
+
+@pytest.mark.parametrize("change, problem", [
+    (lambda i: i["preset"].update(name="Example Test"), "name"),
+    (lambda i: i["meta"].update(tags=["example"]), "tag"),
+    (lambda i: i["meta"].pop("tags"), "tag"),
+    (lambda i: i["meta"].update(description="Shows the format."),
+     "description"),
+])
+def test_example_without_a_demo_mark(change, problem):
+    item = demo_example()
+    change(item)
+    assert demo_problems(item) == [
+        f"example-test-demo: example without the demo {problem}"]
+
+
+def test_example_without_any_demo_mark():
+    assert demo_problems(entry("example-plain")) == [
+        "example-plain: example without the demo name",
+        "example-plain: example without the demo tag",
+        "example-plain: example without the demo description"]
+
+
+@pytest.mark.parametrize("meta, problems", [
+    ({"tags": ["demo"]}, ["tag"]),
+    ({"description": DEMO_NOTE + "."}, ["description"]),
+    ({"tags": ["example", "demo"], "description": DEMO_NOTE + "."},
+     ["tag", "description"]),
+])
+def test_real_preset_with_demo_marks(meta, problems):
+    assert demo_problems(entry("real-preset", **meta)) == [
+        f"real-preset: real preset with the demo {mark}" for mark in problems]
 
 
 def test_valid_catalog():
